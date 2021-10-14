@@ -18,6 +18,8 @@ PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-Intune-LAPS.ps1 -insta
 PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-Intune-LAPS.ps1 -uninstall
 ```
 
+There are two versions of this script. One (Switching Passwords) creates an schedule task which will renew the password from all local users once a week. The second one (Fixed Password) creates a new local admin which gets a random password which will be uploaded to Azure Storage Account Table and never expires. Both require the Azure Storage Account Table to store the passwords.
+
 ## Azure Preperations:
 ...to be created...
 
