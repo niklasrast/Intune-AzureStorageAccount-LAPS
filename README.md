@@ -6,7 +6,7 @@
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/niklasrast/MEM-Intune-AzureStorageAccount-LAPS)
 
-This repository contains an script to create an LAPS solution based on PowerShell and an Azure Table in an Azure Storage Account for dynamic local admin password on Windows clients.
+This repository contains an script to create an LAPS solution based on PowerShell and an Azure Table in an Azure Storage Account for individual local admin password on Windows clients.
 
 ## Install:
 ```powershell
@@ -18,10 +18,31 @@ PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-Intune-LAPS.ps1 -insta
 PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-Intune-LAPS.ps1 -uninstall
 ```
 
-There are two versions of this script. One (Switching Passwords) creates an schedule task which will renew the password from all local users once a week. The second one (Fixed Password) creates a new local admin which gets a random password which will be uploaded to Azure Storage Account Table and never expires. Both require the Azure Storage Account Table to store the passwords.
+In case that you need an solution to create individual local administrators and manage the credentials centraly ive created IntuneLAPS. This solution is based on an PowerShell Script which will be deployed as an Win32 application to windows clients and the credentials will be stored in an Azure Storage Account Table.
+
+## Customer setup
+At the beginning of the script you will find this line, in the quotes you can define the Username for your local administrator. I´ve choosed RecoveryAdmin:
+
+```powershell
+$Username = "RecoveryAdmin"
+```
+After the Username you can see the details to the storage account, SAS token and the table name. Please enter your details here:
+```powershell
+$AzureEndpoint = 'https://ACCOUNTNAME.table.core.windows.net'
+$AzureSharedAccessSignature  = 'SASTOKEN'
+$AzureTable = "TABLENAME"
+```
+Save the script and convert it to .INTUNEWIN. Then create an Win32 application and deploy it to your clients to add and manage the local administrator. Use -install as an parameter to install the local admin account and if you need use -uninstall to remove it again.
 
 ## Azure Preperations:
-...to be created...
+Create an Azure Storage Account
+Create an Table in the Storage Account (for example name it IntuneLAPS)
+Create an SAS Token
+
+## Get local Admin Passwords:
+The credentials for each local administrator will be stored in the Table from the Azure Storage Account and you (plus everyone you´ve permitted) can be read from the Table through the Azure portal
+<img src="img\storageaccounttable.png"/>
+The password will be a random 20-char sting as defined in the PowerShell script.
 
 ### Parameter definitions:
 - -install configures the schedule task to change the local admin passwords.
