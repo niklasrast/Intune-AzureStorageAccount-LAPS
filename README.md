@@ -35,12 +35,12 @@ $AzureTable = "TABLENAME"
 Save the script and convert it to .INTUNEWIN. Then create an Win32 application and deploy it to your clients to add and manage the local administrator. Use -install as an parameter to install the local admin account and if you need use -uninstall to remove it again.
 
 ## Azure Preperations:
-Create an Azure Storage Account
-Create an Table in the Storage Account (for example name it IntuneLAPS)
-Create an SAS Token
+- Create an Azure Storage Account
+- Create an Table in the Storage Account (for example name it IntuneLAPS)
+- Create an SAS Token
 
 ## Get local Admin Passwords:
-The credentials for each local administrator will be stored in the Table from the Azure Storage Account and you (plus everyone you´ve permitted) can be read from the Table through the Azure portal
+The credentials for each local administrator will be stored in the Table from the Azure Storage Account and you (plus everyone you´ve permitted) can be read from the Table through the Azure portal:
 <img src="img\storageaccounttable.png"/>
 The password will be a random 20-char sting as defined in the PowerShell script.
 
