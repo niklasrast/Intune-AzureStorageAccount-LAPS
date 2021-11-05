@@ -53,7 +53,7 @@ The scripts create a logfile with the name of the .ps1 script in the folder C:\W
 
 ## Requirements:
 - PowerShell 5.0
-- Windows 10
+- Windows 10 or later
 - Azure Storage Account with Table
 
 # Feature requests
