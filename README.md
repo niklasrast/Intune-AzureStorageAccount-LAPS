@@ -24,12 +24,15 @@ In case that you need an solution to create individual local administrators and 
 At the beginning of the script you will find this line, in the quotes you can define the Username for your local administrator. I´ve choosed RecoveryAdmin:
 
 ```powershell
+#Config variables (CUSTOMIZE TO TENANT)
 $Username = "LOCALADMINNAME"
 ```
 After the Username you can see the details to the storage account, SAS token and the table name. Please enter your details here:
 ```powershell
-$storageAccount = "STORAGEACCOUNTNAME"
-$AzureEndpoint = "https://$storageAccount.table.core.windows.net"
+#Config variables (CUSTOMIZE TO TENANT)
+$Description = "Built-in account from Operational services"
+$AzureEndpoint = "https://ACCOUNTNAME.table.core.windows.net"
+$storageAccount = "ACCOUNTNAME"
 $AzureSharedAccessSignature  = 'SASTOKENFROMAZURE'
 $AzureTable = "TABLENAME"
 $AzureTableAccessKey = "ACCESSKEYFROMAZURE"
