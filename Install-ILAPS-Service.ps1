@@ -3,8 +3,8 @@
     Windows 10 Software packaging wrapper
 
     .DESCRIPTION
-    Install:   PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -install
-    Uninstall:   PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -uninstall
+    Install:   C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -install
+    Uninstall:   C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -uninstall
 
     .ENVIRONMENT
     PowerShell 5.0

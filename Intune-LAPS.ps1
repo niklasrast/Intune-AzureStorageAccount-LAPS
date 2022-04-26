@@ -4,7 +4,7 @@
     Windows 10 Software packaging wrapper
 
     .DESCRIPTION
-    Run:   PowerShell.exe -ExecutionPolicy Bypass -Command .\Intune-LAPS.ps1
+    Run:   C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Intune-LAPS.ps1
 
     .ENVIRONMENT
     PowerShell 5.0
@@ -13,14 +13,18 @@
     Niklas Rast
 #>
 
-$ErrorActionPreference = "SilentlyContinue"
-$logFile = ('{0}\{1}.log' -f "C:\Windows\Logs", [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name))
+#Config variables (CUSTOMIZE TO TENANT)
 $Username = "LOCALADMINNAME"
-$storageAccount = "STORAGEACCOUNTNAME"
-$AzureEndpoint = "https://$storageAccount.table.core.windows.net"
+$Description = "Built-in account from Operational services"
+$AzureEndpoint = "https://ACCOUNTNAME.table.core.windows.net"
+$storageAccount = "ACCOUNTNAME"
 $AzureSharedAccessSignature  = 'SASTOKENFROMAZURE'
 $AzureTable = "TABLENAME"
 $AzureTableAccessKey = "ACCESSKEYFROMAZURE"
+
+#Script variables (DO NOT CHANGE)
+$ErrorActionPreference = "SilentlyContinue"
+$logFile = ('{0}\{1}.log' -f "C:\Windows\Logs", [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name))
 
 Start-Transcript -path $logFile -Append
     try
@@ -36,10 +40,12 @@ Start-Transcript -path $logFile -Append
             }	
         }
 
+        #Get LocalAdmin Group
         $Group = (Get-WmiObject win32_group -filter "LocalAccount = $TRUE And SID = 'S-1-5-32-544'" | Select-Object -expand name)
+        #Generate new password
         $Password = (Get-RandomAlphanumericString)
-        $Description = "Built-in account from Operational services"
 
+        #Add new LAPS user or update password if existing
         $adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
         $existing = $adsi.Children | Where-Object {$_.SchemaClassName -eq 'user' -and $_.Name -eq $Username }
 
@@ -53,6 +59,7 @@ Start-Transcript -path $logFile -Append
 
         & WMIC USERACCOUNT WHERE "Name='$Username'" SET PasswordExpires=FALSE
 
+        #Check if Storage Account is available
         Function Test-InternetConnection
         {
             [CmdletBinding()]
@@ -65,6 +72,7 @@ Start-Transcript -path $logFile -Append
             Return $Result;
         }
 
+        #Upload data to azure storage account table
         Function Add-AzureTableData
         {
             [CmdletBinding()]
@@ -76,6 +84,7 @@ Start-Transcript -path $logFile -Append
                 [parameter(Mandatory=$true)][hashtable]$TableData
             )
 
+            #Authentification header
             $Headers = @{
                 "x-ms-date"=(Get-Date -Format r);
                 "x-ms-version"="2016-05-31";
@@ -95,10 +104,11 @@ Start-Transcript -path $logFile -Append
             Invoke-WebRequest -Method Post -Uri $URI -Headers $Headers -Body $Body -ContentType "application/json" -UseBasicParsing | Out-Null;
         }
 
+        #Delete data from azure storage account table
         function DeleteTableEntity($PartitionKey,$RowKey) {
             $version = "2017-04-17"
             $resource = "$AzureTable(PartitionKey='$PartitionKey',RowKey='$Rowkey')"
-            $table_url = "https://$storageAccount.table.core.windows.net/$resource"
+	        $table_url = "$AzureEndpoint/$resource"
             $GMTTime = (Get-Date).ToUniversalTime().toString('R')
             $stringToSign = "$GMTTime`n/$storageAccount/$resource"
             $hmacsha = New-Object System.Security.Cryptography.HMACSHA256
@@ -106,6 +116,7 @@ Start-Transcript -path $logFile -Append
             $signature = $hmacsha.ComputeHash([Text.Encoding]::UTF8.GetBytes($stringToSign))
             $signature = [Convert]::ToBase64String($signature)
             
+            #Authentification header
             $headers = @{
                 'x-ms-date'    = $GMTTime
                 Authorization  = "SharedKeyLite " + $storageAccount + ":" + $signature
@@ -114,9 +125,11 @@ Start-Transcript -path $logFile -Append
                 'If-Match'     = "*"
             }
 
+            #Delete data from the Azure table.
             Invoke-RestMethod -Method DELETE -Uri $table_url -Headers $headers -ContentType application/http
         }
 
+        #Convert data to hash table to pipe it to upload function
         Function ConvertTo-HashTable
         {
             [cmdletbinding()]
@@ -161,6 +174,7 @@ Start-Transcript -path $logFile -Append
             }
         }
 
+        #Check if Storage Account is available, if not stop
         If(!((Test-InternetConnection -Target $AzureEndpoint).TcpTestSucceeded -eq "true"))
         {
             Write-Host "Cannot access the storage account through network problems."
@@ -171,7 +185,19 @@ Start-Transcript -path $logFile -Append
         $Serial = (Get-WmiObject win32_bios).Serialnumber
 
         #Remove old entries
-        DeleteTableEntity -PartitionKey $Serial -RowKey $Serial
+        try 
+        {
+            #Send the delete request to MS Graph
+            DeleteTableEntity -PartitionKey $Serial -RowKey $Serial | Out-Null
+        }
+        catch 
+        {
+            #Catch error if request fails or entry was not found
+            Write-Host "First time running this script on this client - Skip delete old entry"
+        }
+
+        #Wait 5 Seconds
+        Start-Sleep -Seconds 5
 
         #Create a new object.
         $TableObject = New-Object -TypeName PSObject;
