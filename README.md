@@ -10,12 +10,12 @@ This repository contains an script to create an LAPS solution based on PowerShel
 
 ## Install:
 ```powershell
-PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -install
+C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -install
 ```
 
 ## Uninstall:
 ```powershell
-PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -uninstall
+C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -uninstall
 ```
 
 In case that you need an solution to create individual local administrators and manage the credentials centraly ive created IntuneLAPS. This solution is based on an PowerShell Script which will be deployed as an Win32 application to windows clients and the credentials will be stored in an Azure Storage Account Table.
