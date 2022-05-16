@@ -8,6 +8,9 @@
 
 This repository contains an script to create an LAPS solution based on PowerShell and an Azure Table in an Azure Storage Account for individual local admin password on Windows clients. The password is changed through an schedule task on the windows client - default every Monday.
 
+## LAPS Workflow:
+<img src="img\workflow.png"/>
+
 ## Install:
 ```powershell
 C:\Windows\SysNative\WindowsPowershell\v1.0\PowerShell.exe -ExecutionPolicy Bypass -Command .\Install-ILAPS-Service.ps1 -install
