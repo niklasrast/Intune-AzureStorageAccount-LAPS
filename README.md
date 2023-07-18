@@ -33,7 +33,7 @@ $Username = "LOCALADMINNAME"
 After the Username you can see the details to the storage account, SAS token and the table name. Please enter your details here:
 ```powershell
 #Config variables (CUSTOMIZE TO TENANT)
-$Description = "Built-in account from Operational services"
+$Description = "Built-in account from Microsoft Intune"
 $AzureEndpoint = "https://ACCOUNTNAME.table.core.windows.net"
 $storageAccount = "ACCOUNTNAME"
 $AzureSharedAccessSignature  = 'SASTOKENFROMAZURE'
