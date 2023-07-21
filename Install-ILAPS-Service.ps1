@@ -25,8 +25,8 @@ $ErrorActionPreference = "SilentlyContinue"
 $logFile = ('{0}\{1}.log' -f "C:\Windows\Logs", [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name))
 
 #Test if registry folder exists
-if ($true -ne (test-Path -Path "HKLM:\SOFTWARE\OS")) {
-    New-Item -Path "HKLM:\SOFTWARE\" -Name "OS" -Force
+if ($true -ne (test-Path -Path "HKLM:\SOFTWARE\COMPANY")) {
+    New-Item -Path "HKLM:\SOFTWARE\" -Name "COMPANY" -Force
 }
 
 if ($install)
@@ -47,8 +47,8 @@ if ($install)
     Start-ScheduledTask -TaskName "IntuneLAPS"
 
     #Register package in registry
-    New-Item -Path "HKLM:\SOFTWARE\OS\" -Name "ILAPS-Service"
-    New-ItemProperty -Path "HKLM:\SOFTWARE\OS\ILAPS-Service" -Name "Version" -PropertyType "String" -Value "3.0.0" -Force
+    New-Item -Path "HKLM:\SOFTWARE\COMPANY\" -Name "ILAPS-Service"
+    New-ItemProperty -Path "HKLM:\SOFTWARE\COMPANY\ILAPS-Service" -Name "Version" -PropertyType "String" -Value "3.0.0" -Force
 
     Stop-Transcript 
 }
@@ -64,6 +64,6 @@ if ($uninstall)
     Remove-Item -Path "C:\Windows\IntuneLAPS" -Recurse -Force
 
     #Register package in registry
-    Remove-Item -Path "HKLM:\SOFTWARE\OS\ILAPS-Service" -Recurse -Force 
+    Remove-Item -Path "HKLM:\SOFTWARE\COMPANY\ILAPS-Service" -Recurse -Force 
 
 }
