@@ -15,7 +15,7 @@
 
 #Config variables (CUSTOMIZE TO TENANT)
 $Username = "LOCALADMINNAME"
-$Description = "Built-in account from Operational services"
+$Description = "Built-in account from Microsoft Intune"
 $AzureEndpoint = "https://ACCOUNTNAME.table.core.windows.net"
 $storageAccount = "ACCOUNTNAME"
 $AzureSharedAccessSignature  = 'SASTOKENFROMAZURE'
